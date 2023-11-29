@@ -1,0 +1,20 @@
+{
+  "name": "taskmanager-chaincode",
+  "version": "1.0.0",
+  "description": "Chaincode for managinf tasks",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Brian Paidamoyo Sithole",
+  "license": "MIT",
+  "dependencies": {
+    "fabric-contract-api": "^2.5.4",
+    "fabric-shim": "^2.5.4",
+    "json-stringify-deterministic": "^1.0.12",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.7"
+  }
+}
