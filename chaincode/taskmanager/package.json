@@ -1,8 +1,8 @@
 {
   "name": "taskmanager-chaincode",
   "version": "1.0.0",
-  "description": "Chaincode for managinf tasks",
-  "main": "index.js",
+  "description": "Chaincode for managing tasks",
+  "main": "dist/taskManager.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

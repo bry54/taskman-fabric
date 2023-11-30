@@ -36,13 +36,18 @@ export class TaskManagerContract extends Contract{
         await ctx.stub.putState(taskId, buffer);
     }
 
+    /**
+     * Returns a task found in the ledger
+     * @param ctx
+     * @param taskId
+     */
     @Transaction(false)
     public async readTask(ctx: Context, taskId: string): Promise<string> {
         const exists = await this.taskExists(ctx, taskId);
         if (!exists) {
             throw new Error(`The task with id ${taskId} does not exist`);
         }
-        const buffer: Buffer = await ctx.stub.getState(taskId);
+        const buffer: Buffer = await ctx.stub.getState(taskId) as Buffer;
         return buffer.toString();
     }
 
@@ -124,7 +129,7 @@ export class TaskManagerContract extends Contract{
     @Transaction()
     @Returns('boolean')
     public async taskExists(ctx: Context, taskId: string): Promise<boolean> {
-        const buffer: Buffer = await ctx.stub.getState(taskId);
+        const buffer: Buffer = await ctx.stub.getState(taskId) as Buffer;
         return (!!buffer && buffer.length > 0);
     }
 }
