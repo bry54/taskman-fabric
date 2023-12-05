@@ -1,0 +1,20 @@
+{
+  "name": "taskmanager-gateway",
+  "version": "1.0.0",
+  "description": "Task Manager Application implemented in typeScript using fabric-gateway",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Brian Paidamoyo Sithole",
+  "license": "MIT",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.9.12",
+    "@hyperledger/fabric-gateway": "^1.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.3"
+  }
+}
