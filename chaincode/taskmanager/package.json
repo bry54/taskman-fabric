@@ -2,10 +2,12 @@
   "name": "taskmanager-chaincode",
   "version": "1.0.0",
   "description": "Chaincode for managing tasks",
-  "main": "dist/taskManager.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "set -x && fabric-chaincode-node start",
+    "docker": "docker build -f ./Dockerfile -t taskmanager .",
+    "test": "nyc mocha -r ts-node/register src/**/*.spec.ts"
   },
   "author": "Brian Paidamoyo Sithole",
   "license": "MIT",
