@@ -15,22 +15,20 @@ export class TaskManagerContract extends Contract{
      * @param title
      * @param description
      * @param status
-     * @param createdAt
-     * @param updatedAt
-     * @param deletedAt
      */
     @Transaction()
-    public async createTask(ctx: Context, title: string, description: string, status: string, createdAt: string, updatedAt: string, deletedAt: string): Promise<void> {
+    public async createTask(ctx: Context, title: string, description: string, status: string): Promise<void> {
         const taskId = uuidv4();
+        const createdAtDate: string = new Date().toISOString();
 
         const task: Task = {
             id: taskId,
             title: title,
             description: description,
             status: status,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            deletedAt: deletedAt
+            createdAt: createdAtDate,
+            updatedAt: createdAtDate,
+            deletedAt: null
         };
         const buffer: Buffer = Buffer.from(JSON.stringify(task));
         await ctx.stub.putState(taskId, buffer);
