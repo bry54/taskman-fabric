@@ -4,7 +4,7 @@
   "description": "Task Manager Application implemented in typeScript using fabric-gateway",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "npx tsc",
     "start": "node dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,6 +15,7 @@
     "@hyperledger/fabric-gateway": "^1.4.0"
   },
   "devDependencies": {
-    "@types/node": "^20.10.3"
+    "@types/node": "^20.10.3",
+    "typescript": "^5.3.2"
   }
 }

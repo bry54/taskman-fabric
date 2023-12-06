@@ -3,50 +3,24 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as grpc from '@grpc/grpc-js';
-import { connect, Contract, Identity, Signer, signers } from '@hyperledger/fabric-gateway';
-import * as crypto from 'crypto';
-import { promises as fs } from 'fs';
-import * as path from 'path';
-import { TextDecoder } from 'util';
-
-const channelName = envOrDefault('CHANNEL_NAME', 'mychannel');
-const chaincodeName = envOrDefault('CHAINCODE_NAME', 'basic');
-const mspId = envOrDefault('MSP_ID', 'Org1MSP');
-
-// Path to crypto materials.
-const cryptoPath = envOrDefault('CRYPTO_PATH', path.resolve(__dirname, '..', '..', 'emulator','test-network', 'organizations', 'peerOrganizations', 'org1.example.com'));
-
-// Path to user private key directory.
-const keyDirectoryPath = envOrDefault('KEY_DIRECTORY_PATH', path.resolve(cryptoPath, 'users', 'User1@org1.example.com', 'msp', 'keystore'));
-
-// Path to user certificate.
-const certPath = envOrDefault('CERT_PATH', path.resolve(cryptoPath, 'users', 'User1@org1.example.com', 'msp', 'signcerts', 'cert.pem'));
-
-// Path to peer tls certificate.
-const tlsCertPath = envOrDefault('TLS_CERT_PATH', path.resolve(cryptoPath, 'peers', 'peer0.org1.example.com', 'tls', 'ca.crt'));
-
-// Gateway peer endpoint.
-const peerEndpoint = envOrDefault('PEER_ENDPOINT', 'localhost:7051');
-
-// Gateway peer SSL host name override.
-const peerHostAlias = envOrDefault('PEER_HOST_ALIAS', 'peer0.org1.example.com');
-
-const utf8Decoder = new TextDecoder();
-
-//const assetId = `asset${Date.now()}`;
+import {connect, Contract} from '@hyperledger/fabric-gateway';
+import {displayInputParameters, newGrpcConnection, newIdentity, newSigner} from "./helpers.service";
 
 async function main(): Promise<void> {
 
     await displayInputParameters();
 
+    return
+
     // The gRPC client connection should be shared by all Gateway connections to this endpoint.
     const client = await newGrpcConnection();
+    const identity = await newIdentity();
+    const signer = await newSigner();
 
     const gateway = connect({
-        client,
-        identity: await newIdentity(),
-        signer: await newSigner(),
+        client: client,
+        identity: identity,
+        signer: signer,
         // Default timeouts for different gRPC calls
         evaluateOptions: () => {
             return { deadline: Date.now() + 5000 }; // 5 seconds
@@ -97,26 +71,7 @@ main().catch(error => {
     process.exitCode = 1;
 });
 
-async function newGrpcConnection(): Promise<grpc.Client> {
-    const tlsRootCert = await fs.readFile(tlsCertPath);
-    const tlsCredentials = grpc.credentials.createSsl(tlsRootCert);
-    return new grpc.Client(peerEndpoint, tlsCredentials, {
-        'grpc.ssl_target_name_override': peerHostAlias,
-    });
-}
 
-async function newIdentity(): Promise<Identity> {
-    const credentials = await fs.readFile(certPath);
-    return { mspId, credentials };
-}
-
-async function newSigner(): Promise<Signer> {
-    const files = await fs.readdir(keyDirectoryPath);
-    const keyPath = path.resolve(keyDirectoryPath, files[0]);
-    const privateKeyPem = await fs.readFile(keyPath);
-    const privateKey = crypto.createPrivateKey(privateKeyPem);
-    return signers.newPrivateKeySigner(privateKey);
-}
 
 /**
  * This type of transaction would typically only be run once by an application the first time it was started after its
@@ -213,21 +168,4 @@ async function updateNonExistentAsset(contract: Contract): Promise<void>{
     } catch (error) {
         console.log('*** Successfully caught the error: \n', error);
     }
-}
-
-
-
-/**
- * displayInputParameters() will print the global scope parameters used by the main driver routine.
- */
-async function displayInputParameters(): Promise<void> {
-    console.log(`channelName:       ${channelName}`);
-    console.log(`chaincodeName:     ${chaincodeName}`);
-    console.log(`mspId:             ${mspId}`);
-    console.log(`cryptoPath:        ${cryptoPath}`);
-    console.log(`keyDirectoryPath:  ${keyDirectoryPath}`);
-    console.log(`certPath:          ${certPath}`);
-    console.log(`tlsCertPath:       ${tlsCertPath}`);
-    console.log(`peerEndpoint:      ${peerEndpoint}`);
-    console.log(`peerHostAlias:     ${peerHostAlias}`);
 }
