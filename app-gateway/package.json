@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "Task Manager Application implemented in typeScript using fabric-gateway",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "build": "npx tsc",
-    "start": "node dist/app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rm -rf dist && npx tsc",
+    "start:js": "node dist/index.js",
+    "start:ts": "ts-node src/index.ts"
   },
   "author": "Brian Paidamoyo Sithole",
   "license": "MIT",
@@ -15,7 +16,9 @@
     "@hyperledger/fabric-gateway": "^1.4.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.3.1",
     "@types/node": "^20.10.3",
+    "ts-node": "^10.9.1",
     "typescript": "^5.3.2"
   }
 }

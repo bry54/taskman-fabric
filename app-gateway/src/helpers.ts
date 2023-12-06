@@ -1,11 +1,11 @@
 import path from "path";
-import {TextDecoder} from "util";
-import {Identity, Signer, signers} from "@hyperledger/fabric-gateway";
+import {connect, Gateway, Identity, Signer, signers} from "@hyperledger/fabric-gateway";
 import {promises as fs} from "fs";
 import {
     certPath,
     chaincodeName,
-    channelName, cryptoPath,
+    channelName,
+    cryptoPath,
     keyDirectoryPath,
     mspId,
     peerEndpoint,
@@ -14,13 +14,6 @@ import {
 } from "./configs";
 import * as grpc from "@grpc/grpc-js";
 import crypto from "crypto";
-
-/**
- * envOrDefault() will return the value of an environment variable, or a default value if the variable is undefined.
- */
-export const envOrDefault = (key: string, defaultValue: string): string => {
-    return process.env[key] || defaultValue;
-}
 
 export const newIdentity = async (): Promise<Identity> => {
     const credentials = await fs.readFile(certPath);
@@ -43,17 +36,23 @@ export const newGrpcConnection = async(): Promise<grpc.Client> => {
     return signers.newPrivateKeySigner(privateKey);
 }
 
-/**
- * displayInputParameters() will print the global scope parameters used by the main driver routine.
- */
-export const displayInputParameters = async (): Promise<void> => {
-    console.log(`channelName:       ${channelName}`);
-    console.log(`chaincodeName:     ${chaincodeName}`);
-    console.log(`mspId:             ${mspId}`);
-    console.log(`cryptoPath:        ${cryptoPath}`);
-    console.log(`keyDirectoryPath:  ${keyDirectoryPath}`);
-    console.log(`certPath:          ${certPath}`);
-    console.log(`tlsCertPath:       ${tlsCertPath}`);
-    console.log(`peerEndpoint:      ${peerEndpoint}`);
-    console.log(`peerHostAlias:     ${peerHostAlias}`);
+export const newGateway = async (client): Promise<Gateway> => {
+    return connect({
+        client: client,
+        identity: await newIdentity(),
+        signer: await newSigner(),
+        // Default timeouts for different gRPC calls
+        evaluateOptions: () => {
+            return { deadline: Date.now() + 5000 }; // 5 seconds
+        },
+        endorseOptions: () => {
+            return { deadline: Date.now() + 15000 }; // 15 seconds
+        },
+        submitOptions: () => {
+            return { deadline: Date.now() + 5000 }; // 5 seconds
+        },
+        commitStatusOptions: () => {
+            return { deadline: Date.now() + 60000 }; // 1 minute
+        },
+    });
 }

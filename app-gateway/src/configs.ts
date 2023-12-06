@@ -1,10 +1,16 @@
 import path from "path";
 import {TextDecoder} from "util";
-import {envOrDefault} from "./helpers.service";
+
+/**
+ * envOrDefault() will return the value of an environment variable, or a default value if the variable is undefined.
+ */
+export const envOrDefault = (key: string, defaultValue: string): string => {
+    return process.env[key] || defaultValue;
+}
 
 export const channelName = envOrDefault('CHANNEL_NAME', 'mychannel');
 
-export const chaincodeName = envOrDefault('CHAINCODE_NAME', 'basic');
+export const chaincodeName = envOrDefault('CHAINCODE_NAME', 'taskmanager');
 
 export const mspId = envOrDefault('MSP_ID', 'Org1MSP');
 
@@ -15,7 +21,7 @@ export const cryptoPath = envOrDefault('CRYPTO_PATH', path.resolve(__dirname, '.
 export const keyDirectoryPath = envOrDefault('KEY_DIRECTORY_PATH', path.resolve(cryptoPath, 'users', 'User1@org1.example.com', 'msp', 'keystore'));
 
 // Path to user certificate.
-export const certPath = envOrDefault('CERT_PATH', path.resolve(cryptoPath, 'users', 'User1@org1.example.com', 'msp', 'signcerts', 'cert.pem'));
+export const certPath = envOrDefault('CERT_PATH', path.resolve(cryptoPath, 'users', 'User1@org1.example.com', 'msp', 'signcerts', 'User1@org1.example.com-cert.pem'));
 
 // Path to peer tls certificate.
 export const tlsCertPath = envOrDefault('TLS_CERT_PATH', path.resolve(cryptoPath, 'peers', 'peer0.org1.example.com', 'tls', 'ca.crt'));
